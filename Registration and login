@@ -1,0 +1,160 @@
+class registration:
+  def username(self,gmail):
+    #gmail=input("Create a username for gmail: ")
+    at=0
+    dot=0
+    i=0
+    while i < len(gmail):
+      if(gmail[i]=='@'):
+        at=at+1
+        a=i
+      if(gmail[i]=='.'):
+        dot=dot+1
+        d=i
+      i=i+1
+    if(at==1 and dot==1):
+      if(gmail[0] != '@'):
+        if(d != a+1):
+          if((ord(gmail[0])>=65 and ord(gmail[0])<=90) or (ord(gmail[0])>=97 and ord(gmail[0])<=122)):
+            print("valid username\n")
+            return 0
+          else:
+            print("Invalid username : usage of int or special char at starting is not advised\n")
+            return 1
+        else:
+          print("username should not have . after @\n")
+          return 1
+      else:
+        print("username should not start with @\n")
+        return 1
+    else:
+      print("check whether @ and . are present in username\n")
+      return 1   
+  def password(self,password):
+    #password=input("Enter password\n")
+    if (len(password)>=5  and len(password)<=16):
+      i=0
+      upper_case = 0
+      lower_case = 0
+      number = 0
+      special_char = 0
+      while i<len(password):
+        if(ord(password[i])>=65 and ord(password[i])<=90):
+          upper_case = upper_case+1
+        elif(ord(password[i])>=97 and ord(password[i])<=112):
+          lower_case = lower_case+1
+        elif(ord(password[i])>=48 and ord(password[i])<=57):
+          number = number+1
+        else:
+          special_char = special_char +1
+        i=i+1
+      if(upper_case>=1 and lower_case>=1 and number>=1 and special_char>=1):
+        print("password given is valid")
+        return 0
+      else:
+        print("Invalid password: Password should contaion atleast one U L N S\n")
+        return 1 
+    else:
+      print("Invalid password len: len should be b/w 5 to16 char\n")
+      return 1
+  
+  def saveuser(self,gmail,password):
+    f=open("username_pass.txt","a")
+    f.write(f"{gmail},{password}\n")
+    f.close()
+      
+  def check_login_details(self,gmail,password):
+    with open(r'username_pass.txt', 'r') as fp:
+      lines = fp.readlines()
+      for row in lines:
+        word = gmail+','+password
+        if row.find(word) == 0:
+          print('user name and password exist\n')
+          return 0
+        else:
+          print("username or password not found\n")
+          return 1
+          
+  def get_password(self,gmail):
+    with open(r'username_pass.txt', 'r') as fp:
+      lines = fp.readlines()
+      for row in lines:
+        word = gmail+','
+        if row.find(word) == 0:
+            for i in range(0,len(row)):
+              c=''
+              if(row[i]!=','):
+                continue
+              if(row[i]==','):
+                j=i
+                for i in range(j+1,len(row)):
+                  c=c+row[i]
+              print("your password is: ",c)
+              return 0
+  def change_pass(self,gmail,password):
+    str=''
+    with open(r'username_pass.txt', 'r') as fp:
+      lines = fp.readlines()
+      for row in lines:
+        word = gmail+','
+        if row.find(word) == 0:
+          for i in range(0,len(row)):
+            c=''
+            if(row[i]!=','):
+              continue
+            if(row[i]==','):
+              j=i
+              for i in range(j+1,len(row)):
+                c=c+row[i]
+            str=c        
+            print("your password is: ",c)
+          print("your password is1: ",str)
+    fp.close()  
+    with open(r'username_pass.txt', 'r') as file:
+      data = file.read()
+      search_text = gmail+','+str
+      replace_text = gmail+','+password+'\n'
+      data = data.replace(search_text, replace_text)
+      with open(r'username_pass.txt', 'w') as file:
+        file.write(data)   
+
+r= registration()
+c=0
+while True:
+  print(" slect option\n")
+  print("1- Register\n2- Login\n")
+  option=int(input())
+  if(option==1):
+    gmail=input("Create a username for gmail: ")
+    c=r.username(gmail)
+    if c==0:
+      password=input("Enter password\n")
+      c=r.password(password)
+      if c==0:
+        c=r.saveuser(gmail,password)
+      if c==0:
+        print("username password stored")
+
+  elif(option==2):
+    print("Enter gmail and password to login\n")
+    gmail=input("Enter gmail: ")
+    password=input("Enter password\n")
+    f=r.check_login_details(gmail,password)
+    if(f!=0):
+      print("Username password not found\n")
+      print("enter 1- provide new password, 2-get password or 3-home")
+      validate=int(input())
+      if(validate==2):
+        gmail=input("Enter gmail: ")
+        b=r.get_password(gmail)
+        if b!=0:
+          print("gmail is not present\n")
+        else:
+          break
+      elif(validate==1):
+        gmail=input("Create a  valid username gmail to change password ")
+        password=input("Enter the new password to change\n")
+        f=r.change_pass(gmail,password)
+     
+  else:
+    break
